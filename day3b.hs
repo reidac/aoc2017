@@ -46,26 +46,23 @@ xycoords n = do
  
 ------------------------------
 
+-- Custom lookup guaranteed to return an int, 0 for not found.
+ilookup :: (Int, Int) -> Map.Map (Int, Int) Int -> Int
+ilookup a m = case (Map.lookup a m) of Just v -> v
+                                       _ -> 0
+
 vsert :: (Int, Int) -> Map.Map (Int, Int) Int -> (Int, Map.Map (Int, Int) Int)
 vsert p m = do  
   let x = fst p
   let y = snd p
-  let v1 = case (Map.lookup (x+1,y) m) of Just v -> v
-                                          _ -> 0
-  let v2 = case (Map.lookup (x-1,y) m) of Just v -> v
-                                          _ -> 0
-  let v3 = case (Map.lookup (x,y+1) m) of Just v -> v
-                                          _ -> 0
-  let v4 = case (Map.lookup (x,y-1) m) of Just v -> v
-                                          _ -> 0
-  let v5 = case (Map.lookup (x+1,y+1) m) of Just v -> v
-                                            _ -> 0
-  let v6 = case (Map.lookup (x-1,y+1) m) of Just v -> v
-                                            _ -> 0
-  let v7 = case (Map.lookup (x+1,y-1) m) of Just v -> v
-                                            _ -> 0
-  let v8 = case (Map.lookup (x-1,y-1) m) of Just v -> v
-                                            _ -> 0
+  let v1 = ilookup (x+1,y) m
+  let v2 = ilookup (x-1,y) m
+  let v3 = ilookup (x,y+1) m
+  let v4 = ilookup (x,y-1) m
+  let v5 = ilookup (x-1,y+1) m
+  let v6 = ilookup (x-1,y-1) m
+  let v7 = ilookup (x+1,y+1) m
+  let v8 = ilookup (x+1,y-1) m
   let rs = v1+v2+v3+v4+v5+v6+v7+v8
   (rs, Map.insert p (v1+v2+v3+v4+v5+v6+v7+v8) m)
 
@@ -80,6 +77,6 @@ tcheck n p m = do
 -- Since the upper routine is bounded, it's guaranteed to stop,
 -- so we can use an infinite list to construct lst.
 main = do  
-  let lst = map xycoords iterate (\x -> x+1) 2
+  let lst = map xycoords (iterate (\x -> x+1) 2)
   let m = Map.singleton (0,0) 1
   putStrLn (show (tcheck 265149 lst m))
