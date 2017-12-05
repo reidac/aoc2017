@@ -77,9 +77,9 @@ tcheck n p m = do
 
 -- Magic 265149 is the input.
   
--- The really-right thing here is to use a generator for lst, 
--- rather than just arbitrarily picking a high bound.  
+-- Since the upper routine is bounded, it's guaranteed to stop,
+-- so we can use an infinite list to construct lst.
 main = do  
-  let lst = map xycoords [2..200]
+  let lst = map xycoords iterate (\x -> x+1) 2
   let m = Map.singleton (0,0) 1
   putStrLn (show (tcheck 265149 lst m))
