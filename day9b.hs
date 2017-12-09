@@ -14,17 +14,8 @@ clean b c o (i:is) = do
                               '>' -> clean False c o is
                               _ -> clean True (c+1) o is
 
--- Inputs are the current level and the cumulative score.
-score :: Int -> Int -> String -> Int
-score l v "" = v
-score l v (s:ss) = case s of '{' -> score (l+1) v ss
-                             '}' -> score (l-1) (v+l) ss
-                             ',' -> score l v ss
-
-
 main = do
   fdat <- readFile "day9.txt"
   let str = head ( lines ( fdat ))
   let (ct,str2) = clean False 0 "" str
-  -- let res = score 0 0 str2
   putStrLn (show (ct :: Int) ) 
