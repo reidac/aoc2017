@@ -20,6 +20,8 @@ spos l t = do
 -- Score function -- traverse the firewall with a delay of d, count
 -- how many times you are caught.  NB this is *not* the severity,
 -- in this case, getting caught at level zero still counts!
+-- A more clever algorithm would break out at the first nonzero hit.
+-- More clever still would be to do some kind of sieve. 
 score :: Int -> Map.Map Int Int -> Int
 score d m = Map.foldrWithKey (\k v r -> if ((spos v (k+d)) == 0) then r+1 else r) 0 m
 
