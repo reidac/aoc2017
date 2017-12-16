@@ -39,11 +39,12 @@ manyshffle :: Int -> [String] -> String -> String
 manyshffle 0 _ s = s
 manyshffle n mvs s = manyshffle (n-1) mvs (shffle mvs s)
 
--- But apparently doing 1000 gives the right answer?  Inspection
--- revealed that the 100 and 1000 gave the same answer, so I took
--- a chance, which worked.  I guess it's periodic?
+-- OK, so you don't.  There's a cycle.  Manually found it to be
+-- 30 long, and 1000000000 mod 30 is 10, so the tenth iteration
+-- is also the billionth iteration.
+
 main = do
   fdat <- readFile "day16.txt"
   let mvs = words (map (\x -> if x == ',' then ' ' else x) (head (lines fdat)))
-  let res = manyshffle 1000 mvs "abcdefghijklmnop"
+  let res = manyshffle 10 mvs "abcdefghijklmnop"
   putStrLn (show res)
