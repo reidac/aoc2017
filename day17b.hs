@@ -1,4 +1,4 @@
-
+import qualified Data.Map as Map
 -- Part b is all math.
 
 -- Our stride is 394.
@@ -13,20 +13,31 @@
 
 stride = 394
 
--- Insertion point, recursive definition.
-ipt :: Int -> Int
-ipt 0 = 0
-ipt n = mod ((mipt (n-1)) + 1 + stride) n
 
--- Memoization trick.
-mipt :: Int -> Int
-mipt = (map ipt [0..] !!)
+-- Manual memoization.  Ship the dictionary around.
+inner :: (Int, Map.Map Int Int) -> (Int, Map.Map Int Int)
+inner (0,m) = (0,m)
+inner (n,m) = do
+  let (nn,nm) = outer (n-1,m)
+  ((rem (nn + 1 + stride) n),nm)
+
+outer :: (Int, Map.Map Int Int) -> (Int, Map.Map Int Int)
+outer (n, m) = if (Map.member n m) then ((Map.findWithDefault 0 n m), m) else do
+  let (r, nm) = inner (n, m) 
+  (r, Map.insert n r nm)
+
+
+build :: Int -> [(Int,Int)] -> Map.Map Int Int -> [(Int,Int)]
+build 0 l m = l
+build n l m = do
+  let (r,nm) = outer (n,m)
+  if r==0 then (build (n-1) (l++[(n,r)]) nm) else (build (n-1) l nm)
 
 -- The actual solution is, what is the largest n less than or equal to
 -- 50000000 for which the insertion point is zero?
 -- Answer: 10150888
--- This function is weirdly slow, even with memoization. Python was
--- ~1000x faster?
+-- This manually-memoized version matches Python for speed.  Don't
 main = do
-  let lst = filter (\x -> (mipt x) == 0) [0..50000000]
-  putStrLn (show lst)
+  let m = Map.empty
+  let r = build 50000000 [] m
+  putStrLn (show (map fst r))
